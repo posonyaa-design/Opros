@@ -772,12 +772,12 @@ app.get("/results", async (c) => {
       categories[cat] = (categories[cat] || 0) + 1;
     });
 
-    let html = \`<div class="stat-card"><div class="number">\${total}</div><div class="label">Всего коллег оценено</div></div>\`;
+    let html = '<div class="stat-card"><div class="number">' + total + '</div><div class="label">Всего коллег оценено</div></div>';
     const order = ['Лидер безопасности', 'Кандидат в лидеры', 'Нейтральный', 'Лидер сопротивления'];
     for (const cat of order) {
       if (categories[cat]) {
         const cls = getBadgeClass(cat);
-        html += \`<div class="stat-card"><div class="number">\${categories[cat]}</div><div class="label"><span class="badge \${cls}">\${cat}</span></div></div>\`;
+        html += '<div class="stat-card"><div class="number">' + categories[cat] + '</div><div class="label"><span class="badge ' + cls + '">' + cat + '</span></div></div>';
       }
     }
     document.getElementById('stats').innerHTML = html;
@@ -793,20 +793,18 @@ app.get("/results", async (c) => {
     results.forEach((r, i) => {
       const cls = getBadgeClass(r.category);
       const date = r.updated_at ? new Date(r.updated_at).toLocaleDateString('ru-RU') : '—';
-      html += \`
-        <tr>
-          <td>\${i+1}</td>
-          <td><strong>\${r.colleague_name}</strong></td>
-          <td>\${r.total_ratings}</td>
-          <td>\${r.avg_advocacy ? r.avg_advocacy.toFixed(2) : '—'}</td>
-          <td>\${r.avg_support ? r.avg_support.toFixed(2) : '—'}</td>
-          <td>\${r.avg_mindset ? r.avg_mindset.toFixed(2) : '—'}</td>
-          <td>\${r.avg_reporting ? r.avg_reporting.toFixed(2) : '—'}</td>
-          <td>\${r.avg_reluctance ? r.avg_reluctance.toFixed(2) : '—'}</td>
-          <td><span class="badge \${cls}">\${r.category || 'Не определена'}</span></td>
-          <td>\${date}</td>
-        </tr>
-      \`;
+      html += '<tr>' +
+        '<td>' + (i+1) + '</td>' +
+        '<td><strong>' + r.colleague_name + '</strong></td>' +
+        '<td>' + r.total_ratings + '</td>' +
+        '<td>' + (r.avg_advocacy ? r.avg_advocacy.toFixed(2) : '—') + '</td>' +
+        '<td>' + (r.avg_support ? r.avg_support.toFixed(2) : '—') + '</td>' +
+        '<td>' + (r.avg_mindset ? r.avg_mindset.toFixed(2) : '—') + '</td>' +
+        '<td>' + (r.avg_reporting ? r.avg_reporting.toFixed(2) : '—') + '</td>' +
+        '<td>' + (r.avg_reluctance ? r.avg_reluctance.toFixed(2) : '—') + '</td>' +
+        '<td><span class="badge ' + cls + '">' + (r.category || 'Не определена') + '</span></td>' +
+        '<td>' + date + '</td>' +
+        '</tr>';
     });
     tbody.innerHTML = html;
   }
@@ -816,15 +814,15 @@ app.get("/results", async (c) => {
       alert('Нет данных для экспорта');
       return;
     }
-    let csv = 'Коллега,Оценок,Advocacy,Support,Mindset,Reporting,Reluctance,Категория\\n';
+    let csv = 'Коллега,Оценок,Advocacy,Support,Mindset,Reporting,Reluctance,Категория\n';
     results.forEach(r => {
-      csv += \`\${r.colleague_name},\${r.total_ratings},\${r.avg_advocacy || ''},\${r.avg_support || ''},\${r.avg_mindset || ''},\${r.avg_reporting || ''},\${r.avg_reluctance || ''},\${r.category || ''}\\n\`;
+      csv += r.colleague_name + ',' + r.total_ratings + ',' + (r.avg_advocacy || '') + ',' + (r.avg_support || '') + ',' + (r.avg_mindset || '') + ',' + (r.avg_reporting || '') + ',' + (r.avg_reluctance || '') + ',' + (r.category || '') + '\n';
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = \`isl_results_\${new Date().toISOString().slice(0,10)}.csv\`;
+    a.download = 'isl_results_' + new Date().toISOString().slice(0,10) + '.csv';
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -841,9 +839,11 @@ app.get("/results", async (c) => {
 // ============================================================
 
 const PORT = parseInt(process.env.PORT || "3000");
-console.log(\`🚀 ISL Survey API запущен на порту \${PORT}\`);
-console.log(\`🔗 /survey — опросник\`);
-console.log(\`📊 /results — результаты для создателя (агрегированные по коллегам)\`);
+
+// Исправленные console.log (без экранирования)
+console.log("🚀 ISL Survey API запущен на порту " + PORT);
+console.log("🔗 /survey — опросник");
+console.log("📊 /results — результаты для создателя (агрегированные по коллегам)");
 
 export default {
   port: PORT,
