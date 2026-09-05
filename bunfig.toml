@@ -2,4 +2,4 @@
 frozen = true
 
 [run]
-bun = "bun"
+bun = true
